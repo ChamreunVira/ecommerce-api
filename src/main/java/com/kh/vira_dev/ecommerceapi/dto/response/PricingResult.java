@@ -19,7 +19,7 @@ public class PricingResult {
 
     private BigDecimal couponDiscount;
 
-    private BigDecimal sippingFee;
+    private BigDecimal shippingFee;
 
     private BigDecimal totalAmount;
 

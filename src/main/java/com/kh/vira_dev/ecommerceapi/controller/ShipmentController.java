@@ -30,6 +30,13 @@ public class ShipmentController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ShipmentResponse>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ShipmentRequest request
+    ) {
+        ShipmentResponse response = shipmentService.update(id, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 
 }

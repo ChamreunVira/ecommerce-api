@@ -23,7 +23,7 @@ public class ShipmentMapper {
                 .destination(shipment.getDestination())
                 .trackingNumber(shipment.getTrackingNumber())
                 .estimatedDelivery(shipment.getEstimatedDelivery())
-                .carrier(shipment.getCarrier().getName())
+                .carrier(shipment.getCarrier() != null ? shipment.getCarrier().getName() : null)
                 .build();
     }
 

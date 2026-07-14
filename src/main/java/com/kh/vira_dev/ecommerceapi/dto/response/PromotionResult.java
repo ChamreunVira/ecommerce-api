@@ -18,4 +18,6 @@ public class PromotionResult {
 
     private BigDecimal discountAmount;
 
+    private boolean freeShipping;
+
 }

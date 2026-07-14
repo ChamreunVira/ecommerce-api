@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
 public class PricingService {
+
+    private static final BigDecimal FLAT_SHIPPING_FEE = new BigDecimal("5.00");
 
     private final PromotionService promotionService;
 
@@ -20,19 +23,27 @@ public class PricingService {
         BigDecimal subtotal = calculateSubtotal(cart);
 
         BigDecimal productDiscount = calculateProductDiscount(cart);
-        PromotionResult pricing = promotionService.applyCoupon(couponCode, subtotal);
+        PromotionResult promotion = promotionService.applyCoupon(couponCode, subtotal);
+
+        BigDecimal shippingFee = promotion.isFreeShipping()
+                ? BigDecimal.ZERO
+                : FLAT_SHIPPING_FEE;
 
         BigDecimal totalAmount = subtotal
                 .subtract(productDiscount)
-                .subtract(pricing.getDiscountAmount())
-                .add(BigDecimal.ZERO);
+                .subtract(promotion.getDiscountAmount())
+                .add(shippingFee);
+
+        if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
+            totalAmount = BigDecimal.ZERO;
+        }
 
         return PricingResult.builder()
-                .subtotal(subtotal)
-                .productDiscount(productDiscount)
-                .sippingFee(BigDecimal.ZERO)
-                .couponDiscount(pricing.getDiscountAmount())
-                .totalAmount(totalAmount)
+                .subtotal(subtotal.setScale(2, RoundingMode.HALF_UP))
+                .productDiscount(productDiscount.setScale(2, RoundingMode.HALF_UP))
+                .shippingFee(shippingFee.setScale(2, RoundingMode.HALF_UP))
+                .couponDiscount(promotion.getDiscountAmount().setScale(2, RoundingMode.HALF_UP))
+                .totalAmount(totalAmount.setScale(2, RoundingMode.HALF_UP))
                 .build();
     }
 
@@ -40,7 +51,7 @@ public class PricingService {
         return cart.getCartItems()
                 .stream()
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO , BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BigDecimal calculateProductDiscount(Cart cart) {
@@ -51,7 +62,7 @@ public class PricingService {
     }
 
     private BigDecimal calculateItemDiscount(CartItem item) {
-        if(item.getProduct().getPrice() == null) {
+        if (item.getProduct().getPrice() == null) {
             return BigDecimal.ZERO;
         }
 

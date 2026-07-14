@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ShipmentRequest {
 
+    private Short orderId;
+
     @NotNull(message = "Status is required.")
     private ShipmentStatus status;
 

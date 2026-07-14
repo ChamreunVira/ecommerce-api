@@ -118,7 +118,6 @@ public class OrderMapper {
         order.setOrderStatus(OrderStatus.PENDING_PAYMENT);
         order.setNote((request.getNote() == null || request.getNote().isBlank()) ? "" : request.getNote());
         order.setPaymentMethod(request.getPaymentMethod());
-        order.setShippingFee(order.getShippingFee());
         order.setCancelledAt(null);
     }
 

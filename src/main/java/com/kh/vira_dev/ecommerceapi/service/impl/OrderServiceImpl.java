@@ -23,8 +23,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-import static com.kh.vira_dev.ecommerceapi.util.Utils.generateTrackingNumber;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,14 +39,28 @@ public class OrderServiceImpl implements OrderService {
     private static final Set<OrderStatus> CANCELLABLE_STATUSES = Set.of(OrderStatus.PENDING , OrderStatus.PROCESSING , OrderStatus.SHIPPED);
 
     @Override
+    @Transactional
     public Order create(Cart cart, PricingResult pricing, CheckoutRequest request) {
         Order order = orderMapper.builderOrder(request);
+
+        User user = cart.getUser();
+        order.setUser(user);
+
+        ShippingAddress shippingAddress = shippingAddressRepository.findById(request.getShippingAddressId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shipping address"));
+        if (shippingAddress.getUser() == null
+                || !shippingAddress.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Shipping address does not belong to the current user.");
+        }
+        order.setShippingAddressSnapshot(orderMapper.builderShippingAddressSnapshot(shippingAddress));
+
         List<OrderItem> orderItems = cart.getCartItems()
                 .stream()
-                .map(cartItem -> orderMapper.builderOrderItemFromCartItem(cartItem , order))
+                .map(cartItem -> orderMapper.builderOrderItemFromCartItem(cartItem, order))
                 .toList();
         order.setOrderItems(orderItems);
         order.setSubtotal(pricing.getSubtotal());
+        order.setShippingFee(pricing.getShippingFee());
         order.setTotalAmount(pricing.getTotalAmount());
         return orderRepository.save(order);
     }

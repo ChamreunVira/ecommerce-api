@@ -8,6 +8,7 @@ import com.kh.vira_dev.ecommerceapi.entity.Order;
 import com.kh.vira_dev.ecommerceapi.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,17 +24,18 @@ public class CheckoutOrchestrator {
     private final ShipmentService shipmentService;
     private final OrderMapper orderMapper;
 
+    @Transactional
     public CheckoutResponse checkout(CheckoutRequest request) {
 
         Cart cart = cartService.getEntity();
 
         inventoryService.validateStock(cart);
 
-        PricingResult pricing = pricingService.calculate(cart , request.getCouponCode());
+        PricingResult pricing = pricingService.calculate(cart, request.getCouponCode());
 
-        Order order = orderService.create(cart , pricing , request);
+        Order order = orderService.create(cart, pricing, request);
 
-        shipmentService.create();
+        shipmentService.createForOrder(order);
 
         inventoryService.deductsStock(cart);
 
@@ -53,7 +55,9 @@ public class CheckoutOrchestrator {
                 .shippingFee(order.getShippingFee() != null ? order.getShippingFee() : BigDecimal.ZERO)
                 .totalAmount(order.getTotalAmount() != null ? order.getTotalAmount().setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO)
                 .orderItems(order.getOrderItems().stream().map(orderMapper::toOrderItemResponse).toList())
-                .shippingAddress(orderMapper.toShippingAddressResponse(order.getShippingAddressSnapshot()))
+                .shippingAddress(order.getShippingAddressSnapshot() != null
+                        ? orderMapper.toShippingAddressResponse(order.getShippingAddressSnapshot())
+                        : null)
                 .paymentSummary(order.getPayment() != null ? orderMapper.toPaymentSummaryResponse(order.getPayment()) : null)
                 .note(order.getNote())
                 .trackingNumber(order.getTrackingNumber())
