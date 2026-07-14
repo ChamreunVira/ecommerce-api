@@ -1,0 +1,6 @@
+# verify side inside container
+docker exec -it pg_ecommerce ls -lh /backup.sql
+
+# backup
+
+docker exec -i pg_ecommerce psql -U ecommerce -d ecommerce < backup.sql

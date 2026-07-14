@@ -1,0 +1,30 @@
+package com.kh.vira_dev.ecommerceapi.enums;
+
+public enum Permission {
+
+    USER_READ,
+    USER_WRITE,
+    USER_UPDATE,
+    USER_DELETE,
+
+    CATEGORY_READ,
+    CATEGORY_WRITE,
+    CATEGORY_UPDATE,
+    CATEGORY_DELETE,
+
+    PRODUCT_READ,
+    PRODUCT_WRITE,
+    PRODUCT_UPDATE,
+    PRODUCT_DELETE,
+
+    ORDER_READ,
+    ORDER_WRITE,
+    ORDER_UPDATE,
+    ORDER_CANCEL,
+
+    CART_READ,
+    CART_WRITE,
+    CART_UPDATE,
+    CART_DELETE,
+
+}

@@ -1,0 +1,24 @@
+ShippingAddress គឺជាអាសយដ្ឋានបច្ចុប្បន្នរបស់ User ដែលអាចកែប្រែបាន។
+- isDefault field សម្រាប់ show default Order at the Orderplace page
+Snapshot មានន័យថា "ថតចម្លងទុក" អាសយដ្ឋាននៅពេល User Checkout។(ការពារនៅពេល User Order នៅភ្នំពេញ ពេល Order place លើកក្រោយ)
+
+Product = Current Data
+OrderItem = Historical Snapshot Data
+
+//create payment service
+
+//request userId can get it from auth user
+//create qr code from req -> /payment/khqr/generate (POST)
+KhqrResponse generateQr(GenerateQrRequest req)
+
+//fontend pull
+// /payment/khqr/status/{transactionId}
+PaymentStatusResponse getStatus(string transactionId);
+
+//NBC callback
+// /payment/khqr/webhook
+void handleWebHookWebhookPayload payload);
+
+// get payment by order
+// payment/{orderId}
+PaymentResponse getByOrder(int orderId);
