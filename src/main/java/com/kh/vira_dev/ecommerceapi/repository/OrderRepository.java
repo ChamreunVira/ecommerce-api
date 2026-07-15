@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Short>, JpaSpecificationExecutor<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
     List<Order> findByUserAndOrderStatus(User user , OrderStatus orderStatus);
 
-    Optional<Order> findByIdAndUser(Short orderId, User user);
+    Optional<Order> findByIdAndUser(Long orderId, User user);
 
     List<Order> findByUser(User user);
 

@@ -24,7 +24,7 @@ public class CartController {
     }
 
     @PutMapping("/items/{id}")
-    public ResponseEntity<ApiResponse<CartResponse>> updateItem(@PathVariable short id, @Valid @RequestBody UpdateItemRequest request) {
+    public ResponseEntity<ApiResponse<CartResponse>> updateItem(@PathVariable Long id, @Valid @RequestBody UpdateItemRequest request) {
         return ResponseEntity.ok().body(ApiResponse.success(cartService.updateItem(id , request)));
     }
 
@@ -34,7 +34,7 @@ public class CartController {
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<ApiResponse<CartResponse>> deleteItemFromCart(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<CartResponse>> deleteItemFromCart(@PathVariable Long id) {
         cartService.removeItem(id);
         return ResponseEntity.ok().body(ApiResponse.success("Success to remove item from card."));
     }

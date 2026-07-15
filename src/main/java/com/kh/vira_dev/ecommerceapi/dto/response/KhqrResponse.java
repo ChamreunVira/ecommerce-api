@@ -16,11 +16,11 @@ import java.time.Instant;
 @Builder
 public class KhqrResponse {
 
-    private int paymentId;
+    private Long paymentId;
 
     private String transactionId;
 
-    private int orderId;
+    private Long orderId;
 
     private BigDecimal amount;
 

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddressResponse {
 
-    private Short addressId;
+    private Long addressId;
 
     private String fullName;
 

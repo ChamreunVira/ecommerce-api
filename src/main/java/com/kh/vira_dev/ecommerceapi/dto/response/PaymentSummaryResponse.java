@@ -16,7 +16,7 @@ import java.time.Instant;
 @Builder
 public class PaymentSummaryResponse {
 
-    private Integer paymentId;
+    private Long paymentId;
 
     private PaymentStatus paymentStatus;
 

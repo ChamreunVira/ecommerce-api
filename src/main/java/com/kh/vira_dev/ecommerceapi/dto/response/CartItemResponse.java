@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @Builder
 public class CartItemResponse {
 
-    private short id;
+    private Long id;
 
-    private Integer productId;
+    private Long productId;
 
     private String productName;
 

@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class CategoryResponse {
 
-    private short id;
+    private Long id;
 
     private String name;
 

@@ -18,5 +18,5 @@ public interface PaymentService {
     //feature
     void handleWebhook();
 
-    PaymentResponse getByOrder(Short orderId);
+    PaymentResponse getByOrder(Long orderId);
 }

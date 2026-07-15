@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 public class CheckoutResponse {
 
-    private short orderId;
+    private Long orderId;
 
     private String orderCode;
 

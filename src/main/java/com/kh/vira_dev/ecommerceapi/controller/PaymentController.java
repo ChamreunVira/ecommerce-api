@@ -32,7 +32,7 @@ public class PaymentController {
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<ApiResponse<PaymentResponse>> getOrder(@PathVariable Short orderId) {
+    public ResponseEntity<ApiResponse<PaymentResponse>> getOrder(@PathVariable Long orderId) {
         var response = paymentService.getByOrder(orderId);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }

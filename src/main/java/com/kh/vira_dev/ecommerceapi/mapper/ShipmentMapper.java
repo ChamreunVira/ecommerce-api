@@ -19,6 +19,8 @@ public class ShipmentMapper {
                 .builder()
                 .id(shipment.getId())
                 .code(shipment.getShipmentCode())
+                .orderCode(shipment.getOrder().getOrderCode())
+                .customer(shipment.getOrder().getShippingAddressSnapshot().getFullName())
                 .status(shipment.getStatus())
                 .destination(shipment.getDestination())
                 .trackingNumber(shipment.getTrackingNumber())

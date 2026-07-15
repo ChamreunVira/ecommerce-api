@@ -10,15 +10,15 @@ public interface CategoryService {
 
     CategoryResponse create(CategoryRequest request);
 
-    CategoryResponse update(short id, CategoryRequest request);
+    CategoryResponse update(Long id, CategoryRequest request);
 
-    void delete(short id);
+    void delete(Long id);
 
-    CategoryResponse getById(short id);
+    CategoryResponse getById(Long id);
 
     List<CategoryResponse> getAll();
 
     List<CategoryTrendResponse> getTrend();
 
-    CategoryResponse status(short id, boolean status);
+    CategoryResponse status(Long id, boolean status);
 }

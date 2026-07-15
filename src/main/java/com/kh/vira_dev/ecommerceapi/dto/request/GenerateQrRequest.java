@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class GenerateQrRequest {
 
     @NotNull(message = "Order id is required.")
-    private Short orderId;
+    private Long orderId;
 
 }

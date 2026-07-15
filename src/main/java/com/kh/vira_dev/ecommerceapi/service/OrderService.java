@@ -17,11 +17,11 @@ public interface OrderService {
 
   List<OrderResponse> getAll();
 
-  OrderResponse getDetails(Short orderId);
+  OrderResponse getDetails(Long orderId);
 
-  OrderCancelResponse cancel(Short orderId);
+  OrderCancelResponse cancel(Long orderId);
 
-  OrderStatusUpdateResponse updateStatus(Short orderId, UpdateOrderStatusRequest request);
+  OrderStatusUpdateResponse updateStatus(Long orderId, UpdateOrderStatusRequest request);
 
   List<RecentOrderResponse> recent();
 

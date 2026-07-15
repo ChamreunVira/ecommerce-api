@@ -16,7 +16,7 @@ public class ShippingAddress extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private short id;
+    private Long id;
 
     @Column(name = "full_name" , nullable = false)
     private String fullName;

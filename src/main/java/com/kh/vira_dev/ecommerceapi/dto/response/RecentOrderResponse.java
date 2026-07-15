@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class RecentOrderResponse {
 
-    private Short orderId;
+    private Long orderId;
 
     private String orderCode;
 

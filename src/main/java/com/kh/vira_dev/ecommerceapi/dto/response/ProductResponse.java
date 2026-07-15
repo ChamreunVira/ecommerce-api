@@ -14,13 +14,13 @@ import java.util.List;
 @Builder
 public class ProductResponse {
 
-    private int id;
+    private Long id;
 
-    private short categoryId;
+    private Long categoryId;
 
     private String categoryName;
 
-    private int userId;
+    private Long userId;
 
     private String username;
     

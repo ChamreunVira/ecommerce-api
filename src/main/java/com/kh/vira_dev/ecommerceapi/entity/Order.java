@@ -23,7 +23,7 @@ public class Order extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private short id;
+    private Long id;
 
     @Column(name = "order_code" , nullable = false , unique = true , length = 30)
     private String orderCode;
@@ -69,4 +69,8 @@ public class Order extends BaseEntity{
 
     @OneToOne(mappedBy = "order" , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     private Shipment shipment;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "promotion_id" , referencedColumnName = "id")
+    private Promotion promotion;
 }

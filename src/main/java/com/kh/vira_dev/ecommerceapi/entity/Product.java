@@ -1,5 +1,6 @@
 package com.kh.vira_dev.ecommerceapi.entity;
 
+import com.kh.vira_dev.ecommerceapi.enums.InventoryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name = "name" , nullable = false , length = 50)
     private String name;
@@ -35,6 +36,12 @@ public class Product extends BaseEntity {
 
     @Column(name = "quantity" , nullable = false)
     private int qty;
+
+    @Column(name = "reserved_quantity")
+    private Integer reservedQuantity;
+
+    @Column(name = "reorder_point")
+    private Integer reorderPoint = 10;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
@@ -54,5 +61,16 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product" ,  cascade = CascadeType.ALL , fetch = FetchType.LAZY , orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @Transient
+    public InventoryStatus getInventoryStatus() {
+        int available = qty - reservedQuantity;
+
+        if(available == 0) return InventoryStatus.OUT_OF_STOCK;
+
+        if(available <= reorderPoint) return InventoryStatus.LOW_STOCK;
+
+        return InventoryStatus.IN_STOCK;
+    }
 
 }

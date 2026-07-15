@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductResponse>> getById(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<ProductResponse>> getById(@PathVariable Long id) {
         var response = productService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -45,13 +45,13 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{id}" , consumes =  MediaType.MULTIPART_FORM_DATA_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<ProductResponse>> update(@PathVariable int id, @Valid @ModelAttribute ProductRequest request) {
+    public ResponseEntity<ApiResponse<ProductResponse>> update(@PathVariable Long id, @Valid @ModelAttribute ProductRequest request) {
         var response = productService.update(id, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null));
     }

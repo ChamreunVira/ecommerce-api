@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class CheckoutRequest {
 
     @NotNull(message = "shipping address id is required.")
-    private short shippingAddressId;
+    private Long shippingAddressId;
 
     private String couponCode;
 

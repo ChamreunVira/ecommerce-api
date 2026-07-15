@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.kh.vira_dev.ecommerceapi.util.Utils.generateTrackingNumber;
@@ -25,7 +26,7 @@ import static com.kh.vira_dev.ecommerceapi.util.Utils.generateTrackingNumber;
 @RequiredArgsConstructor
 public class ShipmentServiceImpl implements ShipmentService {
 
-    private static final String DEFAULT_CARRIER = "Standard";
+    private static final String DEFAULT_CARRIER = "Vira Express";
 
     private final ShipmentRepository shipmentRepository;
     private final OrderRepository orderRepository;
@@ -92,6 +93,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipment.setDestination(destination);
         shipment.setTrackingNumber(trackingNumber);
         shipment.setCarrier(resolveCarrier(DEFAULT_CARRIER));
+        shipment.setEstimatedDelivery(LocalDateTime.now().plusDays(7));
         shipment.setOrder(order);
 
         Shipment saved = shipmentRepository.save(shipment);

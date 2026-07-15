@@ -92,7 +92,7 @@ public class PaymentServiceImpl extends BakongConfig implements PaymentService {
     }
 
     @Override
-    public PaymentResponse getByOrder(Short orderId) {
+    public PaymentResponse getByOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
         Payment payment = order.getPayment();

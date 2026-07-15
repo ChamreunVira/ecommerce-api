@@ -18,7 +18,7 @@ public class OrderItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short id;
+    private Long id;
 
 
     @Column(name = "product_name", nullable = false, length = 100)  

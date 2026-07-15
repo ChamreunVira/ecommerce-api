@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @Builder
 public class OrderItemResponse {
 
-    private short orderItemId;
+    private Long orderItemId;
 
-    private int productId;
+    private Long productId;
 
     private String productName;
 

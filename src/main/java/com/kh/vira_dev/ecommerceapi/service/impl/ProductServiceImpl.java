@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse update(int id, ProductRequest request) {
+    public ProductResponse update(Long id, ProductRequest request) {
         Product product = findByOrThrow(id);
         productMapper.applyToProductFields(product , request);
         Product saved = productRepository.save(product);
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Long id) {
         Product product = findByOrThrow(id);
         product.getImage().forEach(image -> {
             try {
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getById(int id) {
+    public ProductResponse getById(Long id) {
         Product product = findByOrThrow(id);
         return productMapper.toResponse(product);
     }
@@ -88,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponseList((productList));
     }
 
-    private Product findByOrThrow(int id) {
+    private Product findByOrThrow(Long id) {
         log.info("Finding product by id: {}", id);
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product"));

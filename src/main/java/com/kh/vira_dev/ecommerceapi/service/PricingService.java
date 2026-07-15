@@ -44,6 +44,7 @@ public class PricingService {
                 .shippingFee(shippingFee.setScale(2, RoundingMode.HALF_UP))
                 .couponDiscount(promotion.getDiscountAmount().setScale(2, RoundingMode.HALF_UP))
                 .totalAmount(totalAmount.setScale(2, RoundingMode.HALF_UP))
+                .promotion(promotion.getPromotion())
                 .build();
     }
 

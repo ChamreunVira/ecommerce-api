@@ -18,7 +18,7 @@ public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short id;
+    private Long id;
 
     @Column(name = "quantity" , nullable = false)
     private int quantity;

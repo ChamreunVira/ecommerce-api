@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponse updateItem(short itemId, UpdateItemRequest request) {
+    public CartResponse updateItem(Long itemId, UpdateItemRequest request) {
 
         validateCartItemQuantity(request.getQuantity());
 
@@ -94,7 +94,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeItem(short itemId) {
+    public void removeItem(Long itemId) {
 
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item"));
@@ -190,7 +190,7 @@ public class CartServiceImpl implements CartService {
     private CartItem getExistingItem(Cart cart, Product product) {
         return cart.getCartItems()
                 .stream()
-                .filter(item -> item.getProduct().getId() == product.getId())
+                .filter(item -> item.getProduct().getId().equals(product.getId()))
                 .findFirst()
                 .orElse(null);
     }

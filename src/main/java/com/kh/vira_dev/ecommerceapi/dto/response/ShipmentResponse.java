@@ -18,6 +18,10 @@ public class ShipmentResponse {
 
     private String code;
 
+    private String orderCode;
+
+    private String customer;
+
     private ShipmentStatus status;
 
     private String destination;

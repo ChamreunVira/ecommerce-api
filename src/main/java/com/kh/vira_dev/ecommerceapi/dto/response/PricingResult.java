@@ -1,5 +1,6 @@
 package com.kh.vira_dev.ecommerceapi.dto.response;
 
+import com.kh.vira_dev.ecommerceapi.entity.Promotion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +23,7 @@ public class PricingResult {
     private BigDecimal shippingFee;
 
     private BigDecimal totalAmount;
+
+    private Promotion promotion;
 
 }

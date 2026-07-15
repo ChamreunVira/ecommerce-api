@@ -9,14 +9,14 @@ public interface ShippingAddressService {
 
     AddressResponse create(AddressRequest request);
 
-    AddressResponse update(Short id , AddressRequest request);
+    AddressResponse update(Long id , AddressRequest request);
 
-    void delete(Short id);
+    void delete(Long id);
 
-    AddressResponse getById(Short id);
+    AddressResponse getById(Long id);
 
     List<AddressResponse> getAll();
 
-    AddressResponse setDefault(Short id);
+    AddressResponse setDefault(Long id);
 
 }

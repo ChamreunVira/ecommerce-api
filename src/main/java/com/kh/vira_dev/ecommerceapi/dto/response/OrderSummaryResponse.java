@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 public class OrderSummaryResponse {
 
-    private Short orderId;
+    private Long orderId;
 
     private String orderCode;
 

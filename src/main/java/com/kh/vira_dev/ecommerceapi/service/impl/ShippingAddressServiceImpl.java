@@ -30,7 +30,7 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
     }
 
     @Override
-    public AddressResponse update(Short id , AddressRequest request) {
+    public AddressResponse update(Long id , AddressRequest request) {
         ShippingAddress address = findByOrThrow(id);
         shippingAddressMapper.applyShippingAddressFields(address , request);
         ShippingAddress saved = shippingAddressRepository.save(address);
@@ -38,14 +38,14 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
     }
 
     @Override
-    public void delete(Short id) {
+    public void delete(Long id) {
         ShippingAddress address = findByOrThrow(id);
         log.info("Delete shipping address with id {}", id);
         shippingAddressRepository.delete(address);
     }
 
     @Override
-    public AddressResponse getById(Short id) {
+    public AddressResponse getById(Long id) {
         ShippingAddress address = findByOrThrow(id);
         return shippingAddressMapper.toResponse(address);
     }
@@ -60,14 +60,14 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
     }
 
     @Override
-    public AddressResponse setDefault(Short id) {
+    public AddressResponse setDefault(Long id) {
         ShippingAddress address = findByOrThrow(id);
         address.setDefault(true);
         ShippingAddress saved = shippingAddressRepository.save(address);
         return shippingAddressMapper.toResponse(saved);
     }
     
-    private ShippingAddress findByOrThrow(Short id) {
+    private ShippingAddress findByOrThrow(Long id) {
         return shippingAddressRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shipping address"));
     }

@@ -42,19 +42,19 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{id}")
-    public ResponseEntity<ApiResponse<OrderCancelResponse>> cancelOrder(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<OrderCancelResponse>> cancelOrder(@PathVariable Long id) {
         var response = orderService.cancel(id);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<ApiResponse<OrderStatusUpdateResponse>> updateStatus(@PathVariable Short id, @RequestBody UpdateOrderStatusRequest request) {
+    public ResponseEntity<ApiResponse<OrderStatusUpdateResponse>> updateStatus(@PathVariable Long id, @RequestBody UpdateOrderStatusRequest request) {
         var response = orderService.updateStatus(id, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetail(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderDetail(@PathVariable Long id) {
         var response = orderService.getDetails(id);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }

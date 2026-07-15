@@ -14,9 +14,9 @@ import java.util.List;
 @Builder
 public class CartResponse {
 
-    private Short id;
+    private Long id;
 
-    private int userId;
+    private Long userId;
 
     private List<CartItemResponse> cartItems;
 

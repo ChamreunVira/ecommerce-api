@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 public class OrderResponse {
 
-    private short orderId;
+    private Long orderId;
 
     private String orderCode;
 

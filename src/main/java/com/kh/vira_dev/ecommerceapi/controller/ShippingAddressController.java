@@ -27,7 +27,7 @@ public class ShippingAddressController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AddressResponse>> getById(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<AddressResponse>> getById(@PathVariable Long id) {
         var response = shippingAddressService.getById(id);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }
@@ -39,19 +39,19 @@ public class ShippingAddressController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AddressResponse>> update(@PathVariable Short id, @Valid @RequestBody AddressRequest request) {
+    public ResponseEntity<ApiResponse<AddressResponse>> update(@PathVariable Long id, @Valid @RequestBody AddressRequest request) {
         var response = shippingAddressService.update(id , request);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         shippingAddressService.delete(id);
         return ResponseEntity.ok().body(ApiResponse.success(null));
     }
 
     @PutMapping("/is-default/{id}")
-    public ResponseEntity<ApiResponse<AddressResponse>> updateIsDefault(@PathVariable Short id) {
+    public ResponseEntity<ApiResponse<AddressResponse>> updateIsDefault(@PathVariable Long id) {
         var response = shippingAddressService.setDefault(id);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }

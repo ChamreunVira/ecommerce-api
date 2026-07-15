@@ -18,9 +18,9 @@ import java.time.LocalDate;
 @Builder
 public class PaymentResponse {
 
-    private int paymentId;
+    private Long paymentId;
 
-    private int orderId;
+    private Long orderId;
 
     private String orderCode;
 

@@ -18,7 +18,7 @@ public class PaymentStatusResponse {
 
     private String transactionId;
 
-    private int orderId;
+    private Long orderId;
 
     private PaymentStatus status;
 

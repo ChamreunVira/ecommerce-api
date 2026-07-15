@@ -26,7 +26,7 @@ public class UserController {
     private final AuthService authService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable Long id) {
         UserResponse userResponse = userService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
@@ -37,14 +37,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> update(@PathVariable int id, @Valid @RequestBody UserRequest request){
+    public ResponseEntity<ApiResponse<UserResponse>> update(@PathVariable Long id, @Valid @RequestBody UserRequest request){
         UserResponse response = userService.update(id , request);
 
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<ApiResponse<Void>> updateStatus(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> updateStatus(@PathVariable Long id) {
         userService.updateStatus(id);
         return ResponseEntity.ok(ApiResponse.success(null));
     }

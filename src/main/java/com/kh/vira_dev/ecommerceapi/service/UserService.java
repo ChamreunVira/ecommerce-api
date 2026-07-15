@@ -9,12 +9,12 @@ public interface UserService {
 
     UserResponse create(UserRequest request);
 
-    UserResponse update(int id , UserRequest request);
+    UserResponse update(Long id , UserRequest request);
 
-    UserResponse getById(int id);
+    UserResponse getById(Long id);
 
     List<UserResponse> getAll();
 
-    void updateStatus(int id);
+    void updateStatus(Long id);
 
 }

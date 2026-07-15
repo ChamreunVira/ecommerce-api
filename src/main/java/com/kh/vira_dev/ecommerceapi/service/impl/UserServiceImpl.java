@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse update(int id, UserRequest request) {
+    public UserResponse update(Long id, UserRequest request) {
         User user = findByOrThrow(id);
         userMapper.applyToUserField(user , request);
         User saved = userRepository.save(user);
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getById(int id) {
+    public UserResponse getById(Long id) {
         User user = findByOrThrow(id);
         log.info("User getById: {}", user);
         return userMapper.toResponse(user);
@@ -70,14 +70,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateStatus(int id) {
+    public void updateStatus(Long id) {
         User user = findByOrThrow(id);
         user.setStatus(!user.isStatus());
         log.info("User updated: {}", user);
         userRepository.save(user);
     }
 
-    private User findByOrThrow(int id) {
+    private User findByOrThrow(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
     }

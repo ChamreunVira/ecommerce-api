@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_promotion")
@@ -45,5 +46,8 @@ public class Promotion extends BaseEntity {
     private LocalDateTime startAt;
 
     private LocalDateTime expiryAt;
+
+    @OneToMany(mappedBy = "promotion", fetch = FetchType.LAZY)
+    private List<Order> orders;
 
 }

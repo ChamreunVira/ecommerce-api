@@ -62,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
         order.setSubtotal(pricing.getSubtotal());
         order.setShippingFee(pricing.getShippingFee());
         order.setTotalAmount(pricing.getTotalAmount());
+        order.setPromotion(pricing.getPromotion());
         return orderRepository.save(order);
     }
 
@@ -85,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getDetails(Short orderId) {
+    public OrderResponse getDetails(Long orderId) {
         User user = authService.authenticated();
         Order order = orderRepository.findByIdAndUser(orderId , user)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
@@ -93,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderCancelResponse cancel(Short orderId) {
+    public OrderCancelResponse cancel(Long orderId) {
         User user = authService.authenticated();
         Order order = orderRepository.findByIdAndUser(orderId , user)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
@@ -117,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderStatusUpdateResponse updateStatus(Short orderId, UpdateOrderStatusRequest request) {
+    public OrderStatusUpdateResponse updateStatus(Long orderId, UpdateOrderStatusRequest request) {
         Order order = findByOrThrow(orderId);
         order.setOrderStatus(request.getStatus());
         order.setTrackingNumber(order.getTrackingNumber());
@@ -145,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
                 ).toList();
     }
 
-    private Order findByOrThrow(Short orderId) {
+    private Order findByOrThrow(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
     }

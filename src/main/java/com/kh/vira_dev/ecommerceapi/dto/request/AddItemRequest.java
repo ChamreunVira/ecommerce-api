@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class AddItemRequest {
 
     @NotNull(message = "product id is required.")
-    private Integer productId;
+    private Long productId;
 
     @NotNull
     @Min(value = 1 , message = "quantity must be at least 1")

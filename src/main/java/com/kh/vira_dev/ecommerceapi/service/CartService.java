@@ -11,9 +11,9 @@ public interface CartService {
 
     CartResponse getAll();
 
-    CartResponse updateItem(short itemId, UpdateItemRequest request);
+    CartResponse updateItem(Long itemId, UpdateItemRequest request);
 
-    void removeItem(short itemId);
+    void removeItem(Long itemId);
 
     void clear();
 

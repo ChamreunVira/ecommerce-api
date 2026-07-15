@@ -14,7 +14,7 @@ import java.time.Instant;
 @Builder
 public class OrderCancelResponse {
 
-    private Short orderId;
+    private Long orderId;
 
     private String orderCode;
 
