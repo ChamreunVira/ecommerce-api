@@ -20,8 +20,6 @@ public class StockItemResponse {
 
     private Integer qty;
 
-    private Integer reserved;
-
     private Integer reorderPoint;
 
     private InventoryStatus status;

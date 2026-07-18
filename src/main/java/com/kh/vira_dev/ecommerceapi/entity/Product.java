@@ -37,9 +37,6 @@ public class Product extends BaseEntity {
     @Column(name = "quantity" , nullable = false)
     private int qty;
 
-    @Column(name = "reserved_quantity")
-    private Integer reservedQuantity;
-
     @Column(name = "reorder_point")
     private Integer reorderPoint = 10;
 
@@ -64,13 +61,19 @@ public class Product extends BaseEntity {
 
     @Transient
     public InventoryStatus getInventoryStatus() {
-        int available = qty - reservedQuantity;
 
-        if(available == 0) return InventoryStatus.OUT_OF_STOCK;
+        if (qty <= 0) {
+            return InventoryStatus.OUT_OF_STOCK;
+        }
 
-        if(available <= reorderPoint) return InventoryStatus.LOW_STOCK;
+        if (qty <= reorderPoint) {
+            return InventoryStatus.LOW_STOCK;
+        }
 
         return InventoryStatus.IN_STOCK;
     }
+
+    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 
 }

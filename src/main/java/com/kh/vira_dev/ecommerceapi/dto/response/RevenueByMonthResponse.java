@@ -12,7 +12,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class RevenueByMonthResponse {
+
     private Integer month;
+
     private BigDecimal revenue;
+
     private Long orders;
+
 }

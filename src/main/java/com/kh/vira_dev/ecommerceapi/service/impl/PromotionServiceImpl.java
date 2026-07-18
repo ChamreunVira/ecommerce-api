@@ -62,15 +62,26 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
+    public PromotionResponse updateStatus(Long id, String status) {
+
+        validateStatus(status);
         Promotion promotion = findByOrThrow(id);
-        if (promotion.getOrders() != null && !promotion.getOrders().isEmpty()) {
-            throw new IllegalStateException("Cannot delete promotion that is used by orders.");
-        }
-        log.info("Deleted promotion: {}", promotion.getCode());
-        promotionRepository.delete(promotion);
+        promotion.setStatus(PromotionStatus.valueOf(status.toUpperCase()));
+        Promotion saved = promotionRepository.save(promotion);
+
+        return promotionMapper.toResponse(saved);
     }
+
+//    @Override
+//    @Transactional
+//    public void delete(Long id) {
+//        Promotion promotion = findByOrThrow(id);
+//        if (promotion.getOrders() != null && !promotion.getOrders().isEmpty()) {
+//            throw new IllegalStateException("Cannot delete promotion that is used by orders.");
+//        }
+//        log.info("Deleted promotion: {}", promotion.getCode());
+//        promotionRepository.delete(promotion);
+//    }
 
     @Override
     public PromotionResponse getById(Long id) {
@@ -165,9 +176,14 @@ public class PromotionServiceImpl implements PromotionService {
         }
     }
 
+    private void validateStatus(String status) {
+        if(status.isBlank()) {
+            throw new RuntimeException("Status cannot be blank or null");
+        }
+    }
+
     private Promotion findByOrThrow(Long id) {
         return promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Promotion"));
     }
-
 }

@@ -13,7 +13,7 @@ public interface PromotionService {
 
     PromotionResponse update(Long id, PromotionRequest request);
 
-    void delete(Long id);
+    PromotionResponse updateStatus(Long id, String status);
 
     PromotionResponse getById(Long id);
 

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/promotions")
@@ -45,10 +46,10 @@ public class PromotionController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
-        promotionService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("Deleted promotion successfully!"));
-    }
+   @PutMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<PromotionResponse>> updateStatus(@PathVariable Long id, @RequestBody Map<String , String> body) {
+        PromotionResponse response = promotionService.updateStatus(id, body.get("status"));
+        return ResponseEntity.ok(ApiResponse.success(response));
+   }
 
 }

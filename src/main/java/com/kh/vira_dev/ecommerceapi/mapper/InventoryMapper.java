@@ -16,7 +16,6 @@ public class InventoryMapper {
                 .qty(product.getQty())
                 .status(product.getInventoryStatus())
                 .category(categoryName)
-                .reserved(product.getReservedQuantity())
                 .reorderPoint(product.getReorderPoint())
                 .build();
     }

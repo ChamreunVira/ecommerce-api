@@ -84,4 +84,7 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "customer" , cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
 }
