@@ -1,5 +1,6 @@
 package com.kh.vira_dev.ecommerceapi.controller;
 
+import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.AuthRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.ResetPasswordRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.SendOtpRequest;
@@ -8,6 +9,8 @@ import com.kh.vira_dev.ecommerceapi.dto.response.OtpResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.RefreshTokenResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.VerifyOtpResponse;
+import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
+import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.RefreshTokenService;
@@ -56,6 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
+    @Audit(action = AuditAction.LOGIN , module = AuditModule.USER)
     public ResponseEntity<ApiResponse<UserResponse>> signIn(@Valid @RequestBody AuthRequest request) {
         var response = authService.singIn(request);
         ResponseCookie cookie = ResponseCookie
