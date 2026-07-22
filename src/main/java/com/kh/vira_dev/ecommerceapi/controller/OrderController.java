@@ -1,8 +1,11 @@
 package com.kh.vira_dev.ecommerceapi.controller;
 
+import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.CheckoutRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.UpdateOrderStatusRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.*;
+import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
+import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.service.CheckoutOrchestrator;
@@ -24,6 +27,7 @@ public class OrderController {
     private final CheckoutOrchestrator checkoutOrchestrator;
 
     @PostMapping
+    @Audit(action = AuditAction.CREATE, module = AuditModule.ORDER)
     public ResponseEntity<ApiResponse<CheckoutResponse>> create(@Valid @RequestBody CheckoutRequest request) {
         CheckoutResponse response = checkoutOrchestrator.checkout(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
@@ -42,12 +46,14 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{id}")
+    @Audit(action = AuditAction.CANCEL, module = AuditModule.ORDER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<OrderCancelResponse>> cancelOrder(@PathVariable Long id) {
         var response = orderService.cancel(id);
         return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}/status")
+    @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.ORDER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<OrderStatusUpdateResponse>> updateStatus(@PathVariable Long id, @RequestBody UpdateOrderStatusRequest request) {
         var response = orderService.updateStatus(id, request);
         return ResponseEntity.ok(ApiResponse.success(response));

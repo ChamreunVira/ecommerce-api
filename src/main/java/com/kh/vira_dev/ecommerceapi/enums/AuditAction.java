@@ -11,6 +11,8 @@ public enum AuditAction {
     IMPORT,
     APPROVE,
     REJECT,
-    RESET_PASSWORD
+    RESET_PASSWORD,
+    CANCEL,
+    STATUS_CHANGE
 
 }

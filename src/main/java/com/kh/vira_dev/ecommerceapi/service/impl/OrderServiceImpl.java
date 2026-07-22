@@ -13,6 +13,7 @@ import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ShippingAddressRepository;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.OrderService;
+import com.kh.vira_dev.ecommerceapi.service.TelegramNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingFee(pricing.getShippingFee());
         order.setTotalAmount(pricing.getTotalAmount());
         order.setPromotion(pricing.getPromotion());
+
         return orderRepository.save(order);
     }
 

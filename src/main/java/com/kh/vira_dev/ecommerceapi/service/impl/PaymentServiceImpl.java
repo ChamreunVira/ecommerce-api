@@ -16,6 +16,7 @@ import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.BakongService;
 import com.kh.vira_dev.ecommerceapi.service.PaymentService;
 
+import com.kh.vira_dev.ecommerceapi.service.TelegramNotificationService;
 import kh.gov.nbc.bakong_khqr.model.KHQRCurrency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class PaymentServiceImpl extends BakongConfig implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final BakongService bakongService;
+    private final TelegramNotificationService telegramNotificationService;
 
     @Override
     public List<PaymentResponse> getAll() {
@@ -81,6 +83,9 @@ public class PaymentServiceImpl extends BakongConfig implements PaymentService {
 
             Order order = payment.getOrder();
             order.setOrderStatus(OrderStatus.PROCESSING);
+
+            telegramNotificationService.sendPaymentSuccessAlert(payment.getOrder() , payment.getAmount());
+
             orderRepository.save(order);
         }
 

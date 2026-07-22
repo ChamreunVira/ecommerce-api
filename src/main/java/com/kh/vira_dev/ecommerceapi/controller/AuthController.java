@@ -40,6 +40,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/sign-up")
+    @Audit(action = AuditAction.CREATE, module = AuditModule.USER)
     public ResponseEntity<ApiResponse<UserResponse>> signUp(@Valid @RequestBody UserRequest request){
         UserResponse response = userService.create(request);
 
@@ -106,6 +107,7 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
+    @Audit(action = AuditAction.RESET_PASSWORD, module = AuditModule.USER)
     public ResponseEntity<ApiResponse<UserResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         UserResponse response = authService.resetPassword(request);
         return ResponseEntity.ok().body(ApiResponse.success(response));

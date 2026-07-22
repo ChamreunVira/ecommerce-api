@@ -1,8 +1,11 @@
 package com.kh.vira_dev.ecommerceapi.controller;
 
+import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.CategoryRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.CategoryResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.CategoryTrendResponse;
+import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
+import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.service.CategoryService;
 import jakarta.validation.Valid;
@@ -38,24 +41,28 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Audit(action = AuditAction.CREATE, module = AuditModule.CATEGORY)
     public ResponseEntity<ApiResponse<CategoryResponse>> create(@Valid @RequestBody CategoryRequest request) {
         var response = categoryService.create(request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
+    @Audit(action = AuditAction.UPDATE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<CategoryResponse>> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
         var response = categoryService.update(id,request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}/status")
+    @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateStatus(@PathVariable Long id, @RequestParam boolean status) {
         var response = categoryService.status(id , status);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
+    @Audit(action = AuditAction.DELETE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         categoryService.delete(id);
         return ResponseEntity.ok().body(ApiResponse.success("Deleted category successfully!"));

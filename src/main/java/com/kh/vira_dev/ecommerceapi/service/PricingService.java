@@ -14,7 +14,7 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 public class PricingService {
 
-    private static final BigDecimal FLAT_SHIPPING_FEE = new BigDecimal("5.00");
+    private static final BigDecimal FLAT_SHIPPING_FEE = new BigDecimal("0.00");
 
     private final PromotionService promotionService;
 

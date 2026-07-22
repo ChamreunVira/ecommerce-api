@@ -11,6 +11,7 @@ import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ReviewRepository;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.ReviewService;
+import com.kh.vira_dev.ecommerceapi.util.ProfanityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,11 @@ public class ReviewServiceImpl implements ReviewService {
         User user = authService.authenticated();
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product"));
+        
+        if (request.getComment() != null) {
+            request.setComment(ProfanityFilter.clean(request.getComment()));
+        }
+
         Review review = reviewMapper.toEntity(request , user , product);
         Review saved = reviewRepository.save(review);
         return reviewMapper.toResponse(saved);
@@ -38,6 +44,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse update(Long id, ReviewRequest request) {
         Review review = findByOrThrow(id);
+        
+        if (request.getComment() != null) {
+            request.setComment(ProfanityFilter.clean(request.getComment()));
+        }
+
         reviewMapper.applyToReviewFields(review, request);
         Review saved = reviewRepository.save(review);
         return reviewMapper.toResponse(saved);

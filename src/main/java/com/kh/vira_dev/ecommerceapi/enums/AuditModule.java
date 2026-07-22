@@ -9,6 +9,12 @@ public enum AuditModule {
     CUSTOMER,
     INVENTORY,
     SETTING,
-    SYSTEM
+    SYSTEM,
+    PAYMENT,
+    PROMOTION,
+    SHIPMENT,
+    CART,
+    REVIEW,
+    ADDRESS
 
 }

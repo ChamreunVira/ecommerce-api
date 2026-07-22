@@ -1,11 +1,14 @@
 package com.kh.vira_dev.ecommerceapi.controller;
 
+import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.ChangePasswordRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.ResetPasswordRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.SendOtpRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.UserRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.OtpResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
+import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
+import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.UserService;
@@ -37,6 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Audit(action = AuditAction.UPDATE, module = AuditModule.USER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<UserResponse>> update(@PathVariable Long id, @Valid @RequestBody UserRequest request){
         UserResponse response = userService.update(id , request);
 
@@ -44,6 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/status/{id}")
+    @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.USER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<Void>> updateStatus(@PathVariable Long id) {
         userService.updateStatus(id);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -55,6 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
+    @Audit(action = AuditAction.RESET_PASSWORD, module = AuditModule.USER)
     public ResponseEntity<ApiResponse<UserResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         UserResponse response = authService.changePassword(request);
         return ResponseEntity.ok(ApiResponse.success(response));

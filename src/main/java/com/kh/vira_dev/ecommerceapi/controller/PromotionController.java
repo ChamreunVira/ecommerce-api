@@ -1,7 +1,10 @@
 package com.kh.vira_dev.ecommerceapi.controller;
 
+import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.PromotionRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.PromotionResponse;
+import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
+import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.service.PromotionService;
 import jakarta.validation.Valid;
@@ -32,12 +35,14 @@ public class PromotionController {
     }
 
     @PostMapping
+    @Audit(action = AuditAction.CREATE, module = AuditModule.PROMOTION)
     public ResponseEntity<ApiResponse<PromotionResponse>> create(@Valid @RequestBody PromotionRequest request) {
         PromotionResponse response = promotionService.create(request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
+    @Audit(action = AuditAction.UPDATE, module = AuditModule.PROMOTION, entityIdParam = "id")
     public ResponseEntity<ApiResponse<PromotionResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody PromotionRequest request
@@ -47,6 +52,7 @@ public class PromotionController {
     }
 
    @PutMapping("/{id}/status")
+    @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.PROMOTION, entityIdParam = "id")
     public ResponseEntity<ApiResponse<PromotionResponse>> updateStatus(@PathVariable Long id, @RequestBody Map<String , String> body) {
         PromotionResponse response = promotionService.updateStatus(id, body.get("status"));
         return ResponseEntity.ok(ApiResponse.success(response));
