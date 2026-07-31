@@ -6,6 +6,7 @@ import com.kh.vira_dev.ecommerceapi.entity.Permission;
 import com.kh.vira_dev.ecommerceapi.entity.Role;
 import com.kh.vira_dev.ecommerceapi.entity.User;
 import com.kh.vira_dev.ecommerceapi.repository.RoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-
-    public UserMapper(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-        this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
-    }
 
     public User toEntity(UserRequest request) {
         User user = new User();
