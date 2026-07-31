@@ -28,6 +28,8 @@ public class UserResponse {
 
     private List<String> roles;
 
+    private List<String> permissions;
+
     private LocalDate createdAt;
 
     private LocalDate updatedAt;

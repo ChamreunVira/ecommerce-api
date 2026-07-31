@@ -8,10 +8,10 @@ import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
 import com.kh.vira_dev.ecommerceapi.service.ProductService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;;
+    private final ProductService productService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getAll() {
@@ -42,6 +42,7 @@ public class ProductController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,  produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_WRITE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.CREATE, module = AuditModule.PRODUCT)
     public ResponseEntity<ApiResponse<ProductResponse>> create(@Valid @ModelAttribute ProductRequest request) {
         var response = productService.create(request);
@@ -49,6 +50,7 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{id}" , consumes =  MediaType.MULTIPART_FORM_DATA_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_UPDATE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.UPDATE, module = AuditModule.PRODUCT, entityIdParam = "id")
     public ResponseEntity<ApiResponse<ProductResponse>> update(@PathVariable Long id, @Valid @ModelAttribute ProductRequest request) {
         var response = productService.update(id, request);
@@ -56,6 +58,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_DELETE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.DELETE, module = AuditModule.PRODUCT, entityIdParam = "id")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         productService.delete(id);

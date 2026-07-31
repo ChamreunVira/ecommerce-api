@@ -1,7 +1,5 @@
 package com.kh.vira_dev.ecommerceapi.entity;
 
-import com.kh.vira_dev.ecommerceapi.enums.Permission;
-import com.kh.vira_dev.ecommerceapi.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,20 +50,26 @@ public class User extends BaseEntity{
 
     private boolean status = false;
 
-    @Column(name = "roles" , nullable = false , length = 50)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tbl_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles = new HashSet<>();
 
     public Set<SimpleGrantedAuthority> getAuthorities() {
-        
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        
-        roles.forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.name()));
-            for (Permission permission : role.getPermissions()) {
-                authorities.add(new SimpleGrantedAuthority(permission.name()));
-            }
-        });
-        
+        if (roles != null) {
+            roles.forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority(role.getName()));
+                if (role.getPermissions() != null) {
+                    role.getPermissions().forEach(permission -> {
+                        authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                    });
+                }
+            });
+        }
         return authorities;
     }
 

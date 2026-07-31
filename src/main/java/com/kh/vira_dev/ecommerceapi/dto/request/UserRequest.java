@@ -1,6 +1,5 @@
 package com.kh.vira_dev.ecommerceapi.dto.request;
 
-import com.kh.vira_dev.ecommerceapi.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +23,6 @@ public class UserRequest {
     @NotBlank(message = "password is required.")
     private String password;
 
-    private Set<Role> roles;
+    private Set<String> roles;
 
 }

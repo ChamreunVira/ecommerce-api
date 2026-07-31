@@ -15,6 +15,7 @@ public enum AuditModule {
     SHIPMENT,
     CART,
     REVIEW,
-    ADDRESS
+    ADDRESS,
+    ROLE
 
 }

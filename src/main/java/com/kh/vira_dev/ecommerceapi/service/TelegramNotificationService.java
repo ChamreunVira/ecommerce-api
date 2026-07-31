@@ -36,7 +36,7 @@ public class TelegramNotificationService {
         String text = String.format("""
             🎉 *Payment Received Successfully*
 
-            💳 *Payment Information*
+            💳 *Payment Information*Inactive
             • Status: ✅ PAID
             • Amount: *%s KHR*
             • Method: `%s`

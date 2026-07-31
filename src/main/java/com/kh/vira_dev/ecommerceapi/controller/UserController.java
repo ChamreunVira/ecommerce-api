@@ -2,10 +2,7 @@ package com.kh.vira_dev.ecommerceapi.controller;
 
 import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.ChangePasswordRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.ResetPasswordRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.SendOtpRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.UserRequest;
-import com.kh.vira_dev.ecommerceapi.dto.response.OtpResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
 import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
 import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
@@ -15,6 +12,7 @@ import com.kh.vira_dev.ecommerceapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,25 +27,28 @@ public class UserController {
     private final AuthService authService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER_READ') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable Long id) {
         UserResponse userResponse = userService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER_READ') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAll() {
         return ResponseEntity.ok(ApiResponse.success(userService.getAll()));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER_UPDATE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.UPDATE, module = AuditModule.USER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<UserResponse>> update(@PathVariable Long id, @Valid @RequestBody UserRequest request){
         UserResponse response = userService.update(id , request);
-
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/status/{id}")
+    @PreAuthorize("hasAuthority('USER_UPDATE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.USER, entityIdParam = "id")
     public ResponseEntity<ApiResponse<Void>> updateStatus(@PathVariable Long id) {
         userService.updateStatus(id);
@@ -56,7 +57,7 @@ public class UserController {
 
     @GetMapping("/is-authenticated")
     public ResponseEntity<Boolean> isAuthenticated(Authentication authentication) {
-        return ResponseEntity.ok(authentication.isAuthenticated());
+        return ResponseEntity.ok(authentication != null && authentication.isAuthenticated());
     }
 
     @PutMapping("/change-password")
@@ -65,5 +66,4 @@ public class UserController {
         UserResponse response = authService.changePassword(request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
-
 }

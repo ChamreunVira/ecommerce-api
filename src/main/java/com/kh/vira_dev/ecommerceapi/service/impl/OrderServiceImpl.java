@@ -7,13 +7,11 @@ import com.kh.vira_dev.ecommerceapi.entity.*;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
 import com.kh.vira_dev.ecommerceapi.exception.ResourceNotFoundException;
 import com.kh.vira_dev.ecommerceapi.mapper.OrderMapper;
-import com.kh.vira_dev.ecommerceapi.repository.CartRepository;
 import com.kh.vira_dev.ecommerceapi.repository.OrderRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ShippingAddressRepository;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.OrderService;
-import com.kh.vira_dev.ecommerceapi.service.TelegramNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final AuthService authService;
-    private final CartRepository cartRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final OrderMapper orderMapper;
     private final ProductRepository productRepository;

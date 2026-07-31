@@ -11,6 +11,7 @@ import com.kh.vira_dev.ecommerceapi.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CATEGORY_WRITE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.CREATE, module = AuditModule.CATEGORY)
     public ResponseEntity<ApiResponse<CategoryResponse>> create(@Valid @RequestBody CategoryRequest request) {
         var response = categoryService.create(request);
@@ -48,6 +50,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('CATEGORY_UPDATE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.UPDATE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<CategoryResponse>> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
         var response = categoryService.update(id,request);
@@ -55,6 +58,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('CATEGORY_UPDATE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateStatus(@PathVariable Long id, @RequestParam boolean status) {
         var response = categoryService.status(id , status);
@@ -62,6 +66,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('CATEGORY_DELETE') or hasAuthority('ROLE_ADMIN')")
     @Audit(action = AuditAction.DELETE, module = AuditModule.CATEGORY, entityIdParam = "id")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         categoryService.delete(id);

@@ -5,8 +5,6 @@ import com.kh.vira_dev.ecommerceapi.dto.response.BakongApiResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.CheckTransactionResponse;
 import kh.gov.nbc.bakong_khqr.model.KHQRGenerateDeepLinkResponse;
 
-import java.util.Map;
-
 public interface BakongService {
 
     BakongApiResponse generateQrCode(BakongApiRequest request);

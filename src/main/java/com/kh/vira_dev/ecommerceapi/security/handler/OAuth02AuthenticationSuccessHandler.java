@@ -1,10 +1,10 @@
 package com.kh.vira_dev.ecommerceapi.security.handler;
 
 import com.kh.vira_dev.ecommerceapi.entity.RefreshToken;
+import com.kh.vira_dev.ecommerceapi.entity.Role;
 import com.kh.vira_dev.ecommerceapi.entity.User;
-import com.kh.vira_dev.ecommerceapi.enums.Role;
 import com.kh.vira_dev.ecommerceapi.jwt.JwtService;
-import com.kh.vira_dev.ecommerceapi.repository.RefreshTokenRepository;
+import com.kh.vira_dev.ecommerceapi.repository.RoleRepository;
 import com.kh.vira_dev.ecommerceapi.repository.UserRepository;
 import com.kh.vira_dev.ecommerceapi.service.RefreshTokenService;
 import jakarta.servlet.ServletException;
@@ -19,14 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Set;   
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -38,37 +35,50 @@ public class OAuth02AuthenticationSuccessHandler implements AuthenticationSucces
     private Long expiryDate;
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     @Override
     @NullMarked
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    @org.springframework.transaction.annotation.Transactional
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        if(oAuth2User == null) {
+        if (oAuth2User == null) {
             throw new RuntimeException("Something went wrong");
-        };
+        }
         String fullName = oAuth2User.getAttribute("name");
         String email = oAuth2User.getAttribute("email");
 
-        String token = jwtService.generateToken(oAuth2User.getAttribute("email"));
+        String token = jwtService.generateToken(email);
 
         User existsUser = userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     User user = new User();
-                    user.setFullName(fullName);
+                    user.setFullName(fullName != null ? fullName : email);
                     user.setEmail(email);
                     user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-                    user.setRoles(Set.of(Role.ROLE_CUSTOMER));
+
+                    Set<Role> roles = new HashSet<>();
+                    roleRepository.findByName("ROLE_CUSTOMER").ifPresent(roles::add);
+                    user.setRoles(roles);
+
                     user.setStatus(true);
-                    refreshTokenService.refresh(user);
-                    return user;
+                    User savedUser = userRepository.save(user);
+                    RefreshToken refreshToken = refreshTokenService.refresh(savedUser);
+                    savedUser.setRefreshToken(refreshToken);
+                    return savedUser;
                 });
 
-        Cookie cookie = new Cookie("token" , existsUser.getRefreshToken().getToken());
+        if (existsUser.getRefreshToken() == null) {
+            RefreshToken refreshToken = refreshTokenService.refresh(existsUser);
+            existsUser.setRefreshToken(refreshToken);
+        }
 
-        // send to front end
+        Cookie cookie = new Cookie("token", existsUser.getRefreshToken().getToken());
+
         response.addCookie(cookie);
         response.sendRedirect("http://localhost:3000?token=" + token);
     }

@@ -2,7 +2,6 @@ package com.kh.vira_dev.ecommerceapi.config;
 
 import com.kh.vira_dev.ecommerceapi.filter.JwtAuthenticationFilter;
 import com.kh.vira_dev.ecommerceapi.security.AppUserDetailsService;
-//import com.kh.vira_dev.ecommerceapi.security.handler.OAuth2SuccessHandler;
 import com.kh.vira_dev.ecommerceapi.security.handler.CustomAccessDeniedHandler;
 import com.kh.vira_dev.ecommerceapi.security.handler.CustomAuthenticationEntryPoint;
 import com.kh.vira_dev.ecommerceapi.security.handler.OAuth02AuthenticationSuccessHandler;
@@ -10,11 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,6 +30,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
