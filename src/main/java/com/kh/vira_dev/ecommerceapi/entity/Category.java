@@ -29,6 +29,13 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     private List<Product> products;
 
-    private Boolean status = false;
+    private Boolean status;
+
+    @PrePersist
+    public void init() {
+        this.status = Boolean.TRUE;
+    }
+
+
 
 }

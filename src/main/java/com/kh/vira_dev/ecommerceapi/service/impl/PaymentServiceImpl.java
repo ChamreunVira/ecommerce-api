@@ -12,7 +12,6 @@ import com.kh.vira_dev.ecommerceapi.enums.PaymentStatus;
 import com.kh.vira_dev.ecommerceapi.exception.ResourceNotFoundException;
 import com.kh.vira_dev.ecommerceapi.repository.OrderRepository;
 import com.kh.vira_dev.ecommerceapi.repository.PaymentRepository;
-import com.kh.vira_dev.ecommerceapi.security.AuthService;
 import com.kh.vira_dev.ecommerceapi.service.BakongService;
 import com.kh.vira_dev.ecommerceapi.service.PaymentService;
 

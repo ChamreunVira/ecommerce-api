@@ -1,6 +1,5 @@
 package com.kh.vira_dev.ecommerceapi.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Data

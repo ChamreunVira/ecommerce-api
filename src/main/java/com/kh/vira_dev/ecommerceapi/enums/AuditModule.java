@@ -16,6 +16,7 @@ public enum AuditModule {
     CART,
     REVIEW,
     ADDRESS,
-    ROLE
+    ROLE,
+    BANNER
 
 }
