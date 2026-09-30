@@ -34,6 +34,8 @@ public class ProductResponse {
 
     private int qty;
 
+    private Integer reorderPoint;
+
     private List<String> images;
 
     private LocalDate createdAt;

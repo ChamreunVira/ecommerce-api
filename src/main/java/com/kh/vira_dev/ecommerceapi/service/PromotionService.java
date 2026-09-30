@@ -19,6 +19,8 @@ public interface PromotionService {
 
     List<PromotionResponse> getAll();
 
+    PromotionResult validateCoupon(String code, BigDecimal subtotal);
+
     PromotionResult applyCoupon(String code, BigDecimal subtotal);
 
 }

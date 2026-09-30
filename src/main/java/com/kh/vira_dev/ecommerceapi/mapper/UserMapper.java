@@ -6,14 +6,13 @@ import com.kh.vira_dev.ecommerceapi.entity.Permission;
 import com.kh.vira_dev.ecommerceapi.entity.Role;
 import com.kh.vira_dev.ecommerceapi.entity.User;
 import com.kh.vira_dev.ecommerceapi.repository.RoleRepository;
+import com.kh.vira_dev.ecommerceapi.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,6 +48,13 @@ public class UserMapper {
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .bio(user.getBio())
+                .phoneNumber(user.getPhoneNumber())
+                .dateOfBirth(
+                        Optional.ofNullable(user.getDateOfBirth())
+                                .map(LocalDate::toString)
+                                .orElse(null)
+                )
                 .roles(roles)
                 .permissions(permissions)
                 .refreshToken(refreshTokenStr)

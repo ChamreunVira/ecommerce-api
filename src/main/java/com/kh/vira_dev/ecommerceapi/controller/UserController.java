@@ -2,6 +2,7 @@ package com.kh.vira_dev.ecommerceapi.controller;
 
 import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.ChangePasswordRequest;
+import com.kh.vira_dev.ecommerceapi.dto.request.ProfileRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.UserRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
 import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
@@ -64,6 +65,12 @@ public class UserController {
     @Audit(action = AuditAction.RESET_PASSWORD, module = AuditModule.USER)
     public ResponseEntity<ApiResponse<UserResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         UserResponse response = authService.changePassword(request);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(@Valid @RequestBody ProfileRequest request) {
+        UserResponse response = authService.updateProfile(request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

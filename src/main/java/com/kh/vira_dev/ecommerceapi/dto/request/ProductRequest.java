@@ -34,6 +34,8 @@ public class ProductRequest {
     @NotNull(message = "qty is required.")
     private int qty;
 
+    private Integer reorderPoint;
+
     private List<MultipartFile> images;
 
 }

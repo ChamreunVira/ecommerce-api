@@ -59,6 +59,10 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product" ,  cascade = CascadeType.ALL , fetch = FetchType.LAZY , orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    public Integer getReorderPoint() {
+        return reorderPoint != null ? reorderPoint : 10;
+    }
+
     @Transient
     public InventoryStatus getInventoryStatus() {
 
@@ -66,7 +70,7 @@ public class Product extends BaseEntity {
             return InventoryStatus.OUT_OF_STOCK;
         }
 
-        if (qty <= reorderPoint) {
+        if (qty <= getReorderPoint()) {
             return InventoryStatus.LOW_STOCK;
         }
 

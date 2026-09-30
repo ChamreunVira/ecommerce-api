@@ -20,4 +20,12 @@ public class Utils {
         return String.valueOf(opt);
     }
 
+    public static LocalDate toLocalDate(String localDateStr) {
+        try {
+            return LocalDate.parse(localDateStr);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+        }
+    }
+
 }

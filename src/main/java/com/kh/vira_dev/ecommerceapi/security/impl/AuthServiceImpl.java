@@ -1,9 +1,6 @@
 package com.kh.vira_dev.ecommerceapi.security.impl;
 
-import com.kh.vira_dev.ecommerceapi.dto.request.AuthRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.ChangePasswordRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.ResetPasswordRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.SendOtpRequest;
+import com.kh.vira_dev.ecommerceapi.dto.request.*;
 import com.kh.vira_dev.ecommerceapi.dto.response.OtpResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.VerifyOtpResponse;
@@ -120,6 +117,16 @@ public class AuthServiceImpl implements AuthService {
         return OtpResponse.builder()
                 .opt(savedUser.getResetOpt())
                 .build();
+    }
+
+    @Override
+    public UserResponse updateProfile(ProfileRequest request) {
+        User user = authenticated();
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setBio(request.getBio());
+        user.setDateOfBirth(Utils.toLocalDate(request.getDateOfBirth()));
+        User saved = userRepository.save(user);
+        return userMapper.toResponse(saved);
     }
 
     private void validateOtp(User user, String otp) {

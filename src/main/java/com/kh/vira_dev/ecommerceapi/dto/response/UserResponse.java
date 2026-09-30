@@ -22,6 +22,12 @@ public class UserResponse {
 
     private String password;
 
+    private String bio;
+
+    private String phoneNumber;
+
+    private String dateOfBirth;
+
     private String refreshToken;
 
     private String accessToken;

@@ -12,30 +12,23 @@ services:
       - "5433:5432"
     restart: unless-stopped
 
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    container_name: pg_admin_ecommerce
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-vira@gmail.com}
-#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-vira}
-#    ports:
-#      - "5050:80"
-#    restart: unless-stopped
-#    depends_on:
-#      - postgres
-
-  # smtp-relay:
-  #   image: bytemark/smtp:latest
-  #   container_name: smtp_relay
-  #   ports:
-  #     - "2525:25"
-  #   environment:
-  #     - RELAY_HOST=smtp.sendgrid.net
-  #     - RELAY_PORT=587
-  #     - RELAY_USERNAME=chamreunvira
-  #     - RELAY_PASSWORD=chamreunvira
-  #   restart: always
-
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ecommerce-api:latest
+    container_name: ecommerce_api
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
+      SPRING_DATASOURCE_USERNAME: ecommerce
+      SPRING_DATASOURCE_PASSWORD: ecommerce
+    volumes:
+      - ./uploads/products:/home/chamreunvira/Desktop/ecommerce/ecommerce-api/uploads/products
+    restart: unless-stopped
 
 volumes:
   ecomerce_pg_db:

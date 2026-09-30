@@ -1,6 +1,7 @@
 package com.kh.vira_dev.ecommerceapi.repository;
 
 import com.kh.vira_dev.ecommerceapi.entity.Order;
+import com.kh.vira_dev.ecommerceapi.entity.Promotion;
 import com.kh.vira_dev.ecommerceapi.entity.User;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
+
+    boolean existsByUserAndPromotion(User user, Promotion promotion);
 
     List<Order> findByUserAndOrderStatus(User user , OrderStatus orderStatus);
 

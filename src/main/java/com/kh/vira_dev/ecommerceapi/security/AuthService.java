@@ -1,13 +1,11 @@
 package com.kh.vira_dev.ecommerceapi.security;
 
-import com.kh.vira_dev.ecommerceapi.dto.request.AuthRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.ChangePasswordRequest;
-import com.kh.vira_dev.ecommerceapi.dto.request.SendOtpRequest;
+import com.kh.vira_dev.ecommerceapi.dto.request.*;
 import com.kh.vira_dev.ecommerceapi.dto.response.OtpResponse;
-import com.kh.vira_dev.ecommerceapi.dto.request.ResetPasswordRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.UserResponse;
 import com.kh.vira_dev.ecommerceapi.dto.response.VerifyOtpResponse;
 import com.kh.vira_dev.ecommerceapi.entity.User;
+import jakarta.validation.Valid;
 
 public interface AuthService {
 
@@ -25,4 +23,5 @@ public interface AuthService {
 
     OtpResponse sendResetOtp(SendOtpRequest request);
 
+    UserResponse updateProfile(ProfileRequest request);
 }

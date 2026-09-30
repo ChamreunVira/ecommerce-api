@@ -3,6 +3,7 @@ package com.kh.vira_dev.ecommerceapi.controller;
 import com.kh.vira_dev.ecommerceapi.annotation.Audit;
 import com.kh.vira_dev.ecommerceapi.dto.request.PromotionRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.PromotionResponse;
+import com.kh.vira_dev.ecommerceapi.dto.response.PromotionResult;
 import com.kh.vira_dev.ecommerceapi.enums.AuditAction;
 import com.kh.vira_dev.ecommerceapi.enums.AuditModule;
 import com.kh.vira_dev.ecommerceapi.payload.ApiResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -24,21 +26,18 @@ public class PromotionController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<PromotionResponse>>> getAll() {
-        List<PromotionResponse> responses = promotionService.getAll();
-        return ResponseEntity.ok(ApiResponse.success(responses));
+        return ResponseEntity.ok(ApiResponse.success(promotionService.getAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PromotionResponse>> getById(@PathVariable Long id) {
-        PromotionResponse response = promotionService.getById(id);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(promotionService.getById(id)));
     }
 
     @PostMapping
     @Audit(action = AuditAction.CREATE, module = AuditModule.PROMOTION)
     public ResponseEntity<ApiResponse<PromotionResponse>> create(@Valid @RequestBody PromotionRequest request) {
-        PromotionResponse response = promotionService.create(request);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(promotionService.create(request)));
     }
 
     @PutMapping("/{id}")
@@ -47,15 +46,23 @@ public class PromotionController {
             @PathVariable Long id,
             @Valid @RequestBody PromotionRequest request
     ) {
-        PromotionResponse response = promotionService.update(id, request);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(promotionService.update(id, request)));
     }
 
-   @PutMapping("/{id}/status")
+    @PutMapping("/{id}/status")
     @Audit(action = AuditAction.STATUS_CHANGE, module = AuditModule.PROMOTION, entityIdParam = "id")
-    public ResponseEntity<ApiResponse<PromotionResponse>> updateStatus(@PathVariable Long id, @RequestBody Map<String , String> body) {
-        PromotionResponse response = promotionService.updateStatus(id, body.get("status"));
-        return ResponseEntity.ok(ApiResponse.success(response));
-   }
+    public ResponseEntity<ApiResponse<PromotionResponse>> updateStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(promotionService.updateStatus(id, body.get("status"))));
+    }
 
+    @PostMapping("/validate")
+    public ResponseEntity<ApiResponse<PromotionResult>> validate(@RequestBody Map<String, Object> body) {
+        String code = (String) body.get("code");
+        BigDecimal subtotal = new BigDecimal(body.get("subtotal").toString());
+        PromotionResult result = promotionService.validateCoupon(code, subtotal);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
 }

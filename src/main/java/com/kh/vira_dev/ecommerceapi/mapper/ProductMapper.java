@@ -41,6 +41,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .discount(product.getDiscountRate())
                 .qty(product.getQty())
+                .reorderPoint(product.getReorderPoint())
                 .images(product.getImage())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
@@ -65,6 +66,11 @@ public class ProductMapper {
         product.setPrice(request.getPrice());
         product.setDiscountRate(request.getDiscount());
         product.setQty(request.getQty());
+        if(request.getReorderPoint() != null) {
+            product.setReorderPoint(request.getReorderPoint());
+        } else if (product.getReorderPoint() == null) {
+            product.setReorderPoint(10);
+        }
 
         if(request.getImages() != null && !request.getImages().isEmpty()) {
             product.setImage(toProductImages(request.getImages()));
