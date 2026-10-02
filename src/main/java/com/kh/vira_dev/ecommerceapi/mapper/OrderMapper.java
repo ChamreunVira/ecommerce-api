@@ -115,7 +115,11 @@ public class OrderMapper {
 
     private void applyOrderFields(Order order , CheckoutRequest request) {
         order.setOrderCode(generateOrderCode());
-        order.setOrderStatus(OrderStatus.PENDING_PAYMENT);
+        if (request.getPaymentMethod() == com.kh.vira_dev.ecommerceapi.enums.PaymentMethod.CASH_ON_DELIVERY) {
+            order.setOrderStatus(OrderStatus.PENDING);
+        } else {
+            order.setOrderStatus(OrderStatus.PENDING_PAYMENT);
+        }
         order.setNote((request.getNote() == null || request.getNote().isBlank()) ? "" : request.getNote());
         order.setPaymentMethod(request.getPaymentMethod());
         order.setCancelledAt(null);

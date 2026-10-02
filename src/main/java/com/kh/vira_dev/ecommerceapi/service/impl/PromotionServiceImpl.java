@@ -34,7 +34,6 @@ public class PromotionServiceImpl implements PromotionService {
     private final OrderRepository orderRepository;
     private final AuthService authService;
 
-    // ─── CRUD ────────────────────────────────────────────────────────────────
 
     @Override
     @Transactional
@@ -54,7 +53,9 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     public PromotionResponse update(Long id, PromotionRequest request) {
         validateDates(request);
+
         Promotion promotion = findByOrThrow(id);
+        
         String code = request.getCode().trim().toUpperCase();
         if (promotionRepository.existsByCodeIgnoreCaseAndIdNot(code, id)) {
             throw new DuplicateResourceException("Promotion");
@@ -83,12 +84,6 @@ public class PromotionServiceImpl implements PromotionService {
         return promotionMapper.toResponseList(promotionRepository.findAll());
     }
 
-    // ─── Coupon validation ────────────────────────────────────────────────────
-
-    /**
-     * Preview-only validation used by the "Apply" button.
-     * Runs all 7 checks WITHOUT incrementing usageCount.
-     */
     @Override
     public PromotionResult validateCoupon(String code, BigDecimal subtotal) {
         if (code == null || code.isBlank()) {
@@ -111,9 +106,6 @@ public class PromotionServiceImpl implements PromotionService {
                 .build();
     }
 
-    /**
-     * Called at actual checkout: validates and then increments usageCount.
-     */
     @Override
     @Transactional
     public PromotionResult applyCoupon(String code, BigDecimal subtotal) {
@@ -130,7 +122,11 @@ public class PromotionServiceImpl implements PromotionService {
         BigDecimal discount = calculateDiscount(promotion, subtotal);
         boolean freeShipping = promotion.getType() == PromotionType.FREE_SHIPPING;
 
-        // Increment usage only at real checkout
+        promotion.setUsageCount(
+                (promotion.getUsageCount() == null ? 0 : promotion.getUsageCount()) + 1
+        );
+        promotionRepository.save(promotion);
+
         promotion.setUsageCount(
                 (promotion.getUsageCount() == null ? 0 : promotion.getUsageCount()) + 1
         );
@@ -143,11 +139,6 @@ public class PromotionServiceImpl implements PromotionService {
                 .build();
     }
 
-    // ─── 7-check validation ───────────────────────────────────────────────────
-
-    /**
-     * Runs all 7 promotion validity checks. Throws IllegalStateException on failure.
-     */
     private void runAllChecks(Promotion promotion, BigDecimal subtotal, User user) {
 
         // 1. Cart must not be empty

@@ -8,6 +8,7 @@ import com.kh.vira_dev.ecommerceapi.entity.Order;
 import com.kh.vira_dev.ecommerceapi.entity.Payment;
 import com.kh.vira_dev.ecommerceapi.enums.CurrencyType;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
+import com.kh.vira_dev.ecommerceapi.enums.PaymentMethod;
 import com.kh.vira_dev.ecommerceapi.enums.PaymentStatus;
 import com.kh.vira_dev.ecommerceapi.exception.ResourceNotFoundException;
 import com.kh.vira_dev.ecommerceapi.repository.OrderRepository;
@@ -45,6 +46,10 @@ public class PaymentServiceImpl extends BakongConfig implements PaymentService {
 
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
+
+        if (order.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY) {
+            throw new IllegalArgumentException("Cannot generate KHQR payment for Cash on Delivery orders.");
+        }
 
         Payment existing = order.getPayment();
         if (existing != null && existing.getPaymentStatus() == PaymentStatus.PAID) {
