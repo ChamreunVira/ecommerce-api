@@ -4,10 +4,14 @@ import com.kh.vira_dev.ecommerceapi.dto.request.CheckoutRequest;
 import com.kh.vira_dev.ecommerceapi.dto.request.UpdateOrderStatusRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.*;
 import com.kh.vira_dev.ecommerceapi.entity.*;
+import com.kh.vira_dev.ecommerceapi.enums.CurrencyType;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
+import com.kh.vira_dev.ecommerceapi.enums.PaymentMethod;
+import com.kh.vira_dev.ecommerceapi.enums.PaymentStatus;
 import com.kh.vira_dev.ecommerceapi.exception.ResourceNotFoundException;
 import com.kh.vira_dev.ecommerceapi.mapper.OrderMapper;
 import com.kh.vira_dev.ecommerceapi.repository.OrderRepository;
+import com.kh.vira_dev.ecommerceapi.repository.PaymentRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ShippingAddressRepository;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
@@ -32,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final ShippingAddressRepository shippingAddressRepository;
     private final OrderMapper orderMapper;
     private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
 
     //block cancel
     private static final Set<OrderStatus> CANCELLABLE_STATUSES = Set.of(OrderStatus.PENDING , OrderStatus.PROCESSING , OrderStatus.SHIPPED);
@@ -62,7 +67,23 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalAmount(pricing.getTotalAmount());
         order.setPromotion(pricing.getPromotion());
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        if (request.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY) {
+            Payment payment = new Payment();
+            payment.setMethod(PaymentMethod.CASH_ON_DELIVERY);
+            payment.setPaymentStatus(PaymentStatus.PENDING);
+            payment.setTransactionId("COD-" + savedOrder.getOrderCode());
+            payment.setQrString("N/A");
+            payment.setMd5("N/A");
+            payment.setAmount(pricing.getTotalAmount());
+            payment.setCurrency(CurrencyType.USD);
+            payment.setOrder(savedOrder);
+            paymentRepository.save(payment);
+            savedOrder.setPayment(payment);
+        }
+
+        return savedOrder;
     }
 
     @Override
@@ -121,6 +142,14 @@ public class OrderServiceImpl implements OrderService {
         Order order = findByOrThrow(orderId);
         order.setOrderStatus(request.getStatus());
         order.setTrackingNumber(order.getTrackingNumber());
+        if (request.getStatus() == OrderStatus.DELIVERED && order.getPayment() != null) {
+            Payment payment = order.getPayment();
+            if (payment.getPaymentStatus() != PaymentStatus.PAID) {
+                payment.setPaymentStatus(PaymentStatus.PAID);
+                payment.setPaidAt(Instant.now());
+                paymentRepository.save(payment);
+            }
+        }
         Order saved = orderRepository.save(order);
         return orderMapper.toOrderStatusUpdateResponse(saved);
     }
