@@ -9,7 +9,7 @@ services:
     volumes:
       - ecomerce_pg_db:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - '5433:5432'
     restart: unless-stopped
 
   app:
@@ -19,7 +19,9 @@ services:
     image: ecommerce-api:latest
     container_name: ecommerce_api
     ports:
-      - "8081:8081"
+      - '8081:8081'
+    env_file:
+      - .env
     depends_on:
       - postgres
     environment:
@@ -27,7 +29,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ecommerce
       SPRING_DATASOURCE_PASSWORD: ecommerce
     volumes:
-      - ./uploads/products:/home/chamreunvira/Desktop/ecommerce/ecommerce-api/uploads/products
+      - ./uploads/products:/opt/ecommerce/uploads/products
     restart: unless-stopped
 
 volumes:
