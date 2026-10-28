@@ -48,7 +48,19 @@ SPRING_DATASOURCE_PASSWORD
 JWT_BASE64SECRET
 JWT_EXPIRATION
 UPLOADS_DIR
+STORAGE_DRIVER
+AWS_S3_BUCKET
+AWS_S3_FORCE_PATH_STYLE
+AWS_REGION
 ```
+
+Uploads use local storage by default. Set `STORAGE_DRIVER=s3`, `AWS_S3_BUCKET`, and
+`AWS_REGION` to store product and banner images in S3. Set
+`AWS_S3_FORCE_PATH_STYLE=false` for standard AWS S3 URLs. The AWS SDK reads
+credentials from its default credential chain, including `AWS_ACCESS_KEY_ID` and
+`AWS_SECRET_ACCESS_KEY`; on AWS hosting, prefer an instance or task role. Do not
+commit credentials. The saved image URLs require the bucket or a CDN to allow
+the application's intended public image reads.
 
 The application also expects credentials when Google OAuth2, SMTP, Bakong KHQR, or
 Telegram integrations are enabled.
@@ -142,7 +154,9 @@ src/main/java/com/kh/vira_dev/ecommerceapi/
 ```
 
 Uploaded product images are stored under `uploads/products` by default. Keep that
-directory mounted or backed up when running in a containerized environment.
+directory mounted or backed up when running in a containerized environment. With
+`STORAGE_DRIVER=s3`, new product and banner images are saved to the configured
+bucket and their API responses contain the corresponding S3 object URL.
 
 ## Data and checkout notes
 

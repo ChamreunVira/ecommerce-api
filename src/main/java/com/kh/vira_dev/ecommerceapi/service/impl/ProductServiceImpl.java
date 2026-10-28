@@ -8,19 +8,15 @@ import com.kh.vira_dev.ecommerceapi.mapper.ProductMapper;
 import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.service.ProductService;
 import com.kh.vira_dev.ecommerceapi.specification.ProductSpecification;
+import com.kh.vira_dev.ecommerceapi.util.FileUploadUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -28,10 +24,9 @@ import java.util.List;
 @Slf4j
 public class ProductServiceImpl implements ProductService {
 
-    @Value("${uploads.dir}")
-    private String UPLOAD_DIR;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final FileUploadUtils fileUploadUtils;
 
     @Override
     public ProductResponse create(ProductRequest request) {
@@ -54,15 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long id) {
         Product product = findByOrThrow(id);
-        product.getImage().forEach(image -> {
-            try {
-                Path imagePath = Paths.get(UPLOAD_DIR).resolve(image);
-                Files.deleteIfExists(imagePath);
-            }catch (IOException ex) {
-                log.info("Could not delete image {}", image);
-                throw new ResourceNotFoundException("image not found");
-            }
-});
+        product.getImage().forEach(fileUploadUtils::delete);
         productRepository.delete(product);
     }
 
