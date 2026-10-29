@@ -7,7 +7,9 @@ public class ProfanityFilter {
 
     private static final List<String> BLACKLIST = Arrays.asList(
             "អាចន៍",
-            "អាចម៍"
+            "អាចម៍",
+            "មិនល្អ",
+            "not good"
     );
 
     public static String clean(String input) {
@@ -16,7 +18,6 @@ public class ProfanityFilter {
         }
         String cleaned = input;
         for (String word : BLACKLIST) {
-            // Replace exact matches of the word with ***
             cleaned = cleaned.replace(word, "***");
         }
         return cleaned;
