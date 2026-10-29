@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class JwtConfig {
 
-    @Value("${jwt.base64Secret}")
+    @Value("${JWT_SECRET}")
     private String base64Secret;
 
     @Value("${jwt.expiration}")
