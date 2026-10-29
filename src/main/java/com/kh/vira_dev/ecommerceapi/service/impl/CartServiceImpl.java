@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -66,7 +67,13 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartResponse getAll() {
         Cart cart = cartRepository.findByUser(authService.authenticated())
-                .orElseThrow(() -> new ResourceNotFoundException("User"));
+                .orElseGet(() -> {
+                    Cart emptyCart = new Cart();
+                    emptyCart.setUser(authService.authenticated());
+                    emptyCart.setCartItems(new ArrayList<>());
+                    return emptyCart;
+                });
+
         return toResponse(cart);
     }
 
