@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 
 name: CI/CD Pipeline
 
@@ -41,11 +40,14 @@ jobs:
           JAR="target/ecommerce-api-0.0.1-SNAPSHOT.jar"
 
           if [[ ! -s "$JAR" ]]; then
-            echo "ERROR: Expected JAR was not created: $JAR"
+            echo "ERROR: JAR was not created."
             exit 1
           fi
 
+          echo "Build artifact:"
           ls -lh "$JAR"
+
+          echo "Build checksum:"
           sha256sum "$JAR"
 
       - name: Upload JAR artifact
@@ -78,11 +80,13 @@ jobs:
           JAR="./artifact/ecommerce-api-0.0.1-SNAPSHOT.jar"
 
           if [[ ! -s "$JAR" ]]; then
-            echo "ERROR: Downloaded JAR is missing or empty."
+            echo "ERROR: Downloaded JAR is missing."
             exit 1
           fi
 
+          echo "Downloaded artifact:"
           ls -lh "$JAR"
+
           sha256sum "$JAR"
 
       - name: Configure SSH
@@ -94,9 +98,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          : "${EC2_KEY:?Missing GitHub secret EC2_KEY}"
-          : "${EC2_HOST:?Missing GitHub secret EC2_HOST}"
-          : "${EC2_PORT:?Missing GitHub secret EC2_PORT}"
+          : "${EC2_KEY:?Missing EC2_KEY}"
+          : "${EC2_HOST:?Missing EC2_HOST}"
+          : "${EC2_PORT:?Missing EC2_PORT}"
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -109,7 +113,7 @@ jobs:
 
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Copy JAR to EC2
+      - name: Upload new JAR to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_PORT: ${{ secrets.EC2_PORT }}
@@ -141,15 +145,17 @@ jobs:
             -p "$EC2_PORT" \
             "ubuntu@$EC2_HOST" \
             "bash -s -- '$APP_HEALTH_URL'" <<'REMOTE'
+
           set -Eeuo pipefail
 
           HEALTH_URL="${1:-}"
           APP="/opt/vstore/app.jar"
           NEW_JAR="/home/ubuntu/app-new.jar"
           SERVICE="vstore.service"
-          BACKUP="/opt/vstore/app.jar.bak"
 
+          echo "================================"
           echo "Connected to: $(hostname)"
+          echo "================================"
 
           echo "Checking Java..."
           java -version
@@ -157,98 +163,81 @@ jobs:
           echo "Checking uploaded JAR..."
           sudo test -s "$NEW_JAR"
 
-          echo "Checking destination directory..."
+          echo "Checking application directory..."
           sudo test -d /opt/vstore
 
-          # Preserve the previous JAR before replacing it.
-          if sudo test -f "$APP"; then
-            echo "Backing up the current JAR..."
-            sudo cp -a "$APP" "$BACKUP"
-          else
-            echo "ERROR: Existing JAR not found. Aborting deployment."
-            exit 1
-          fi
-
-          # Stop the application before installing the new JAR.
-          echo "Stopping $SERVICE..."
+          echo "Stopping application..."
           sudo systemctl stop "$SERVICE"
 
-          # Install the new JAR with the expected ownership and mode.
-          echo "Installing the new JAR..."
+          echo "Installing new JAR..."
           sudo install -o vstore -g vstore -m 640 "$NEW_JAR" "$APP"
+
+          echo "Verifying installed JAR..."
+          sudo cmp --silent "$NEW_JAR" "$APP" || {
+            echo "ERROR: Installed JAR does not match uploaded JAR."
+            exit 1
+          }
 
           echo "Installed JAR checksum:"
           sudo sha256sum "$APP"
 
-          # Roll back automatically if startup or verification fails.
-          rollback() {
-            echo "ERROR: Deployment failed. Restoring previous JAR..."
+          echo "Removing temporary uploaded JAR..."
+          rm -f "$NEW_JAR"
 
-            sudo systemctl stop "$SERVICE" || true
-
-            if sudo test -f "$BACKUP"; then
-              sudo cp -a "$BACKUP" "$APP"
-              sudo chown vstore:vstore "$APP"
-              sudo chmod 640 "$APP"
-
-              sudo systemctl restart "$SERVICE" || true
-              sleep 3
-              sudo systemctl status "$SERVICE" --no-pager || true
-              sudo journalctl -u "$SERVICE" -n 80 --no-pager || true
-            else
-              echo "ERROR: No backup available for rollback."
-            fi
-          }
-
-          if ! sudo systemctl start "$SERVICE"; then
-            rollback
-            exit 1
-          fi
+          echo "Starting application..."
+          sudo systemctl start "$SERVICE"
 
           echo "Waiting for application startup..."
+
+          HEALTHY=false
+
           for attempt in $(seq 1 30); do
+
             if ! sudo systemctl is-active --quiet "$SERVICE"; then
-              echo "ERROR: Service stopped during startup."
-              rollback
+              echo "ERROR: Application stopped during startup."
+              sudo journalctl -u "$SERVICE" -n 100 --no-pager
               exit 1
+            fi
+
+            if [[ -n "$HEALTH_URL" ]]; then
+              if curl --fail --silent --max-time 5 \
+                "$HEALTH_URL" >/dev/null 2>&1; then
+                HEALTHY=true
+                break
+              fi
+            else
+              if [[ "$attempt" -eq 30 ]]; then
+                HEALTHY=true
+              fi
             fi
 
             sleep 2
           done
 
-          # If configured, require a successful HTTP health check.
-          if [[ -n "$HEALTH_URL" ]]; then
-            echo "Checking application health: $HEALTH_URL"
-            healthy=false
-
-            for attempt in $(seq 1 15); do
-              if curl --fail --silent --show-error \
-                --max-time 5 "$HEALTH_URL" >/dev/null 2>&1; then
-                healthy=true
-                break
-              fi
-
-              sleep 2
-            done
-
-            if [[ "$healthy" != true ]]; then
-              echo "ERROR: Application health check failed."
-              rollback
-              exit 1
-            fi
-          else
-            echo "WARNING: APP_HEALTH_URL is not configured."
-            echo "Only systemd status has been verified."
+          if [[ "$HEALTHY" != true ]]; then
+            echo "ERROR: Application health check failed."
+            sudo systemctl status "$SERVICE" --no-pager || true
+            sudo journalctl -u "$SERVICE" -n 100 --no-pager
+            exit 1
           fi
 
-          echo "Verifying JAR permissions..."
+          echo "================================"
+          echo "Deployment successful!"
+          echo "================================"
+
+          echo "JAR permissions:"
           sudo stat -c '%U:%G %a %n' "$APP"
 
-          echo "Deployment successful!"
+          echo "Service status:"
           sudo systemctl status "$SERVICE" --no-pager
+
+          echo "Recent application logs:"
           sudo journalctl -u "$SERVICE" -n 40 --no-pager
+
           REMOTE
 
       - name: Cleanup SSH key
         if: always()
-        run: rm -f ~/.ssh/id_rsa
+        shell: bash
+        run: |
+          rm -f ~/.ssh/id_rsa
