@@ -9,7 +9,6 @@ import com.kh.vira_dev.ecommerceapi.entity.CartItem;
 import com.kh.vira_dev.ecommerceapi.entity.Product;
 import com.kh.vira_dev.ecommerceapi.entity.User;
 import com.kh.vira_dev.ecommerceapi.exception.ResourceNotFoundException;
-import com.kh.vira_dev.ecommerceapi.repository.CartItemRepository;
 import com.kh.vira_dev.ecommerceapi.repository.CartRepository;
 import com.kh.vira_dev.ecommerceapi.repository.ProductRepository;
 import com.kh.vira_dev.ecommerceapi.security.AuthService;
@@ -17,6 +16,7 @@ import com.kh.vira_dev.ecommerceapi.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,11 +29,11 @@ import java.util.ArrayList;
 public class CartServiceImpl implements CartService {
  
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final AuthService authService;
 
     @Override
+    @Transactional
     public CartResponse addItem(AddItemRequest request) {
 
         validateCartItemQuantity(request.getQuantity());
@@ -65,11 +65,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CartResponse getAll() {
-        Cart cart = cartRepository.findByUser(authService.authenticated())
+        User user = authService.authenticated();
+        Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {
                     Cart emptyCart = new Cart();
-                    emptyCart.setUser(authService.authenticated());
+                    emptyCart.setUser(user);
                     emptyCart.setCartItems(new ArrayList<>());
                     return emptyCart;
                 });
@@ -78,6 +80,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartResponse updateItem(Long itemId, UpdateItemRequest request) {
 
         validateCartItemQuantity(request.getQuantity());
@@ -95,33 +98,40 @@ public class CartServiceImpl implements CartService {
 
         cartItem.setQuantity(request.getQuantity());
 
-        cartItemRepository.save(cartItem);
-
         return toResponse(cart);
     }
 
     @Override
+    @Transactional
     public void removeItem(Long itemId) {
-
-        CartItem cartItem = cartItemRepository.findById(itemId)
+        Cart cart = cartRepository.findByUser(authService.authenticated())
+                .orElseThrow(() -> new ResourceNotFoundException("Cart"));
+        CartItem cartItem = cart.getCartItems()
+                .stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item"));
-
-        cartItemRepository.delete(cartItem);
+        cart.getCartItems().remove(cartItem);
     }
 
     @Override
+    @Transactional
     public void clear() {
-        Cart cart = cartRepository.findByUser(authService.authenticated())
-                .orElseThrow(() -> new ResourceNotFoundException("User"));
-        cart.getCartItems().clear();
-        log.info("Delete cart with userId: {}." , cart.getUser().getId());
-        cartRepository.save(cart);
+        cartRepository.findByUser(authService.authenticated()).ifPresent(cart -> {
+            cart.getCartItems().clear();
+            log.info("Clear cart for userId: {}.", cart.getUser().getId());
+        });
     }
 
     @Override
     public Cart getEntity() {
         User user = authService.authenticated();
-        return user.getCart();
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Cart is empty."));
+        if (cart.getCartItems().isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty.");
+        }
+        return cart;
     }
 
     private CartResponse toResponse(Cart cart) {
@@ -149,7 +159,9 @@ public class CartServiceImpl implements CartService {
                 .id(cartItem.getId())
                 .productId(product.getId())
                 .productName(product.getName())
-                .productImage(product.getImage().getFirst())
+                .productImage(product.getImage() == null
+                        ? null
+                        : product.getImage().stream().findFirst().orElse(null))
                 .unitPrice(BigDecimal.valueOf(product.getPrice()))
                 .discountRate(product.getDiscountRate())
                 .finalPrice(calculateFinalPrice(cartItem.getProduct()))

@@ -42,7 +42,9 @@ public class ProductMapper {
                 .discount(product.getDiscountRate())
                 .qty(product.getQty())
                 .reorderPoint(product.getReorderPoint())
-                .images(product.getImage())
+                .images(product.getImage() == null ? null : product.getImage().stream()
+                        .map(fileUploadUtils::toImageFilename)
+                        .toList())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();

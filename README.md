@@ -57,10 +57,11 @@ AWS_REGION
 Uploads use local storage by default. Set `STORAGE_DRIVER=s3`, `AWS_S3_BUCKET`, and
 `AWS_REGION` to store product and banner images in S3. Set
 `AWS_S3_FORCE_PATH_STYLE=false` for standard AWS S3 URLs. The AWS SDK reads
-credentials from its default credential chain, including `AWS_ACCESS_KEY_ID` and
-`AWS_SECRET_ACCESS_KEY`; on AWS hosting, prefer an instance or task role. Do not
-commit credentials. The saved image URLs require the bucket or a CDN to allow
-the application's intended public image reads.
+credentials from its default credential chain; on EC2, attach an instance role
+that can read, write, and delete objects under `uploads/`. Do not commit access
+keys. Keep S3 Block Public Access enabled. Product and banner uploads store only
+the generated filename in PostgreSQL; the API serves image bytes through
+`GET /api/v1/images/products/{filename}`.
 
 The application also expects credentials when Google OAuth2, SMTP, Bakong KHQR, or
 Telegram integrations are enabled.
@@ -155,8 +156,11 @@ src/main/java/com/kh/vira_dev/ecommerceapi/
 
 Uploaded product images are stored under `uploads/products` by default. Keep that
 directory mounted or backed up when running in a containerized environment. With
-`STORAGE_DRIVER=s3`, new product and banner images are saved to the configured
-bucket and their API responses contain the corresponding S3 object URL.
+`STORAGE_DRIVER=s3`, new product and banner images are saved under `uploads/` in
+the configured bucket and their API responses contain the filename. Existing S3
+URLs and legacy relative values are converted to that filename in API responses.
+The API streams image bytes from private S3 objects and also supports local file
+storage when `STORAGE_DRIVER=local`.
 
 ## Data and checkout notes
 

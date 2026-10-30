@@ -4,6 +4,8 @@ import com.kh.vira_dev.ecommerceapi.dto.request.CheckoutRequest;
 import com.kh.vira_dev.ecommerceapi.dto.response.*;
 import com.kh.vira_dev.ecommerceapi.entity.*;
 import com.kh.vira_dev.ecommerceapi.enums.OrderStatus;
+import com.kh.vira_dev.ecommerceapi.util.FileUploadUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,7 +15,10 @@ import java.time.Instant;
 import static com.kh.vira_dev.ecommerceapi.util.Utils.generateOrderCode;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
+    private final FileUploadUtils fileUploadUtils;
+
     public OrderResponse toResponse(Order order) {
         return OrderResponse
                 .builder()
@@ -42,7 +47,7 @@ public class OrderMapper {
                 .orderItemId(orderItem.getId())
                 .productId(orderItem.getProduct().getId())
                 .productName(orderItem.getProduct().getName())
-                .imageUrl(orderItem.getProduct().getImage().getFirst())
+                .imageUrl(fileUploadUtils.toImageFilename(orderItem.getProduct().getImage().getFirst()))
                 .quantity(orderItem.getQuantity())
                 .unitPrice(orderItem.getUnitPrice())
                 .discountRate(orderItem.getDiscountRate())
@@ -72,7 +77,7 @@ public class OrderMapper {
                 .paymentMethod(order.getPaymentMethod())
                 .totalAmount(order.getTotalAmount())
                 .totalItems(order.getOrderItems().size())
-                .primaryImage(order.getOrderItems().getFirst().getProductImage())
+                .primaryImage(fileUploadUtils.toImageFilename(order.getOrderItems().getFirst().getProductImage()))
                 .createdAt(order.getCreatedAt())
                 .build();
     }

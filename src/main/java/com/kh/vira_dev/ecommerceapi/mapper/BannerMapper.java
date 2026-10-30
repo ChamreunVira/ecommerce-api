@@ -27,7 +27,7 @@ public class BannerMapper {
                 .id(banner.getId())
                 .title(banner.getTitle())
                 .subtitle(banner.getSubtitle())
-                .imageUrl(banner.getImageUrl())
+                .imageUrl(fileUploadUtils.toImageFilename(banner.getImageUrl()))
                 .buttonLabel(banner.getButtonLabel())
                 .buttonLink(banner.getButtonLink())
                 .active(banner.getActive())

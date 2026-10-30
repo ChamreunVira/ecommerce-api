@@ -11,7 +11,7 @@ import lombok.*;
 public class UpdateItemRequest {
 
     @NotNull
-    @Min(value = 0 , message = "quantity must be 0 or more")
+    @Min(value = 1 , message = "quantity must be at least 1")
     private Integer quantity;
 
 }

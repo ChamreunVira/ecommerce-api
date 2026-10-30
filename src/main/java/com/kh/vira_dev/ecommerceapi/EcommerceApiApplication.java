@@ -12,7 +12,14 @@ import java.util.Map;
 public class EcommerceApiApplication {
 
     public static void main(String[] args) {
-       SpringApplication.run(EcommerceApiApplication.class, args);
+       SpringApplication application = new SpringApplication(EcommerceApiApplication.class);
+       application.setDefaultProperties(Map.of(
+               "MAIL_HOST", "localhost",
+               "MAIL_PORT", "25",
+               "MAIL_USERNAME", "",
+               "MAIL_PASSWORD", ""
+       ));
+       application.run(args);
     }
 
 }

@@ -22,3 +22,5 @@ void handleWebHookWebhookPayload payload);
 // get payment by order
 // payment/{orderId}
 PaymentResponse getByOrder(int orderId);
+
+sudo install -o vstore -g vstore -m 640 /home/ubuntu/app.jar.new /opt/vstore/app.jar
